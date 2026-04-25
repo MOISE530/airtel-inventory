@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtel Inventory System - Device List</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>AIRTEL PROFESSIONAL INVENTORY MANAGEMENT</h1>
+                    <p class="tagline">End-User Equipment Tracking System</p>
+                </div>
+                <div class="user-info">
+                    <span>Welcome, <strong>Admin</strong></span>
+                    <a th:href="@{/logout}" class="logout-btn">Logout</a>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Device Management</h2>
+                    <p>View and manage all registered devices</p>
+                </div>
+                <div class="page-actions">
+                    <a th:href="@{/devices/add}" class="btn btn-primary">
+                        <span class="btn-icon">➕</span> Add New Device
+                    </a>
+                    <div class="export-dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" onclick="toggleExportDropdown()">
+                            <span class="btn-icon">📊</span> Export Data
+                        </button>
+                        <div id="exportDropdown" class="dropdown-menu">
+                            <a th:href="@{/export/devices/csv}" class="dropdown-item">
+                                <span class="item-icon">📋</span> Export Devices (CSV)
+                            </a>
+                            <a th:href="@{/export/employees/csv}" class="dropdown-item">
+                                <span class="item-icon">👥</span> Export Employees (CSV)
+                            </a>
+                            <a th:href="@{/export/assignments/csv}" class="dropdown-item">
+                                <span class="item-icon">🔄</span> Export Assignments (CSV)
+                            </a>
+                            <a th:href="@{/export/summary/txt}" class="dropdown-item">
+                                <span class="item-icon">📄</span> Inventory Summary (TXT)
+                            </a>
+                        </div>
+                    </div>
+                    <a th:href="@{/dashboard}" class="btn btn-secondary">
+                        <span class="btn-icon">🏠</span> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+            
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+            
+            <div class="advanced-search-section">
+                <div class="search-tabs">
+                    <button class="tab-btn active" onclick="showTab('keyword')">Keyword Search</button>
+                    <button class="tab-btn" onclick="showTab('filter')">Advanced Filter</button>
+                </div>
+                
+                <!-- Keyword Search Tab -->
+                <div id="keyword-tab" class="tab-content active">
+                    <form th:action="@{/devices/search}" method="get" class="search-form">
+                        <div class="search-row">
+                            <input type="text" name="keyword" th:value="${searchKeyword}" 
+                                   placeholder="Search by asset tag, serial number, brand, model, or specifications..." 
+                                   class="search-input">
+                            <button type="submit" class="btn btn-search">
+                                <span class="search-icon">🔍</span> Search
+                            </button>
+                            <a th:href="@{/devices}" class="btn btn-secondary">Clear</a>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Advanced Filter Tab -->
+                <div id="filter-tab" class="tab-content">
+                    <form th:action="@{/devices/search}" method="get" class="filter-form">
+                        <div class="filter-grid">
+                            <div class="filter-group">
+                                <label for="deviceType">Device Type</label>
+                                <select id="deviceType" name="deviceType" class="form-control">
+                                    <option value="">All Types</option>
+                                    <option value="Laptop" th:selected="${filterDeviceType == 'Laptop'}">Laptop</option>
+                                    <option value="Desktop" th:selected="${filterDeviceType == 'Desktop'}">Desktop</option>
+                                    <option value="Mobile" th:selected="${filterDeviceType == 'Mobile'}">Mobile</option>
+                                    <option value="Tablet" th:selected="${filterDeviceType == 'Tablet'}">Tablet</option>
+                                    <option value="Monitor" th:selected="${filterDeviceType == 'Monitor'}">Monitor</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="brand">Brand</label>
+                                <select id="brand" name="brand" class="form-control">
+                                    <option value="">All Brands</option>
+                                    <option value="Dell" th:selected="${filterBrand == 'Dell'}">Dell</option>
+                                    <option value="HP" th:selected="${filterBrand == 'HP'}">HP</option>
+                                    <option value="Apple" th:selected="${filterBrand == 'Apple'}">Apple</option>
+                                    <option value="Lenovo" th:selected="${filterBrand == 'Lenovo'}">Lenovo</option>
+                                    <option value="Samsung" th:selected="${filterBrand == 'Samsung'}">Samsung</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="status">Status</label>
+                                <select id="status" name="status" class="form-control">
+                                    <option value="">All Status</option>
+                                    <option value="Available" th:selected="${filterStatus == 'Available'}">Available</option>
+                                    <option value="Assigned" th:selected="${filterStatus == 'Assigned'}">Assigned</option>
+                                    <option value="Maintenance" th:selected="${filterStatus == 'Maintenance'}">Maintenance</option>
+                                    <option value="Lost" th:selected="${filterStatus == 'Lost'}">Lost</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="condition">Condition</label>
+                                <select id="condition" name="condition" class="form-control">
+                                    <option value="">All Conditions</option>
+                                    <option value="New" th:selected="${filterCondition == 'New'}">New</option>
+                                    <option value="Good" th:selected="${filterCondition == 'Good'}">Good</option>
+                                    <option value="Fair" th:selected="${filterCondition == 'Fair'}">Fair</option>
+                                    <option value="Damaged" th:selected="${filterCondition == 'Damaged'}">Damaged</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a th:href="@{/devices}" class="btn btn-secondary">Clear All</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div th:if="${searchPerformed}" class="search-results-info">
+                <p><strong>Search Results:</strong> <span th:text="${devices != null ? devices.size() : 0}">0</span> devices found</p>
+                <a th:href="@{/devices}" class="btn btn-sm btn-secondary">Show All Devices</a>
+            </div>
+            
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Asset Tag</th>
+                            <th>Serial Number</th>
+                            <th>Device Type</th>
+                            <th>Brand</th>
+                            <th>Model</th>
+                            <th>Status</th>
+                            <th>Condition</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="device : ${devices}">
+                            <td th:text="${device.id}">1</td>
+                            <td th:text="${device.assetTag}">LAP-001</td>
+                            <td th:text="${device.serialNumber}">SN123456</td>
+                            <td th:text="${device.deviceType}">Laptop</td>
+                            <td th:text="${device.brand}">Dell</td>
+                            <td th:text="${device.model}">XPS 15</td>
+                            <td>
+                                <span class="status-badge" 
+                                      th:classappend="${device.status == 'Available' ? 'status-available' : (device.status == 'Assigned' ? 'status-assigned' : 'status-lost')}"
+                                      th:text="${device.status}">Available</span>
+                            </td>
+                            <td>
+                                <span class="condition-badge" 
+                                      th:classappend="${device.deviceCondition == 'Good' ? 'condition-good' : (device.deviceCondition == 'New' ? 'condition-new' : 'condition-damaged')}"
+                                      th:text="${device.deviceCondition}">Good</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a th:href="@{/devices/view/{id}(id=${device.id})}" 
+                                       class="btn btn-info btn-sm">View</a>
+                                    <a th:href="@{/devices/edit/{id}(id=${device.id})}" 
+                                       class="btn btn-warning btn-sm">Edit</a>
+                                    <button class="btn btn-danger btn-sm" 
+                                            th:onclick="'confirmDelete(' + ${device.id} + ')'">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${devices == null or devices.empty}">
+                            <td colspan="9" class="text-center">No devices found. <a th:href="@{/devices/add}">Add your first device</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        function confirmDelete(deviceId) {
+            if (confirm('Are you sure you want to delete this device? This action cannot be undone.')) {
+                window.location.href = '/airtel-inventory/devices/delete/' + deviceId;
+            }
+        }
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        
+        // Auto-search functionality
+        let searchTimeout;
+        function setupAutoSearch() {
+            const searchInput = document.querySelector('input[name="keyword"]');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        if (this.value.length >= 2 || this.value.length === 0) {
+                            this.form.submit();
+                        }
+                    }, 500);
+                });
+            }
+        }
+        
+        // Export dropdown functionality
+        function toggleExportDropdown() {
+            const dropdown = document.getElementById('exportDropdown');
+            dropdown.classList.toggle('show');
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('exportDropdown');
+            const button = event.target.closest('.export-dropdown');
+            
+            if (!button && dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+        });
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupAutoSearch();
+        });
+    </script>
+</body>
+</html>

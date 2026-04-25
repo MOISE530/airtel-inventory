@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtel Inventory System - Device Assignments</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>AIRTEL PROFESSIONAL INVENTORY MANAGEMENT</h1>
+                    <p class="tagline">End-User Equipment Tracking System</p>
+                </div>
+                <div class="user-info">
+                    <span>Welcome, <strong>Admin</strong></span>
+                    <a th:href="@{/logout}" class="logout-btn">Logout</a>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Device Assignment History</h2>
+                    <p>View assignment history for this device</p>
+                </div>
+                <div class="page-actions">
+                    <a th:href="@{/devices/view/{id}(id=${device.id})}" class="btn btn-secondary">Back to Device</a>
+                    <a th:href="@{/assignments}" class="btn btn-secondary">All Assignments</a>
+                </div>
+            </div>
+            
+            <div class="device-info-card">
+                <h3>Device Information</h3>
+                <div class="device-details">
+                    <div class="detail-item">
+                        <strong>Asset Tag:</strong> <span th:text="${device.assetTag}">LAP-001</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Brand:</strong> <span th:text="${device.brand}">Dell</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Model:</strong> <span th:text="${device.model}">XPS 15</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Type:</strong> <span th:text="${device.deviceType}">Laptop</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Current Status:</strong> 
+                        <span class="status-badge" 
+                              th:classappend="${device.status == 'Available' ? 'status-available' : (device.status == 'Assigned' ? 'status-assigned' : 'status-lost')}"
+                              th:text="${device.status}">Available</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="assignments-card">
+                <h3>Assignment History</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Assigned Date</th>
+                                <th>Return Date</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="assignment : ${assignments}">
+                                <td>
+                                    <div class="employee-info">
+                                        <strong th:text="${assignment.employee.fullName}">John Doe</strong><br>
+                                        <small th:text="${assignment.employee.employeeId}">EMP001</small><br>
+                                        <small th:text="${assignment.employee.department}">IT</small>
+                                    </div>
+                                </td>
+                                <td th:text="${#temporals.format(assignment.assignedDate, 'yyyy-MM-dd')}">2023-06-01</td>
+                                <td>
+                                    <span th:if="${assignment.returnDate != null}" 
+                                          th:text="${#temporals.format(assignment.returnDate, 'yyyy-MM-dd')}">2023-06-15</span>
+                                    <span th:if="${assignment.returnDate == null}" class="status-badge status-assigned">Active</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge" 
+                                          th:classappend="${assignment.returnDate == null ? 'status-assigned' : 'status-available'}"
+                                          th:text="${assignment.returnDate == null ? 'Active' : 'Returned'}">Active</span>
+                                </td>
+                                <td th:text="${assignment.notes}">Development work</td>
+                            </tr>
+                            <tr th:if="${assignments == null or assignments.empty}">
+                                <td colspan="5" class="text-center">No assignments found for this device.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <style>
+        .device-info-card, .assignments-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .device-info-card h3, .assignments-card h3 {
+            margin-bottom: 1.5rem;
+            color: #333;
+            border-bottom: 2px solid #e20000;
+            padding-bottom: 0.5rem;
+        }
+        
+        .device-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .detail-item strong {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .detail-item span {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .employee-info {
+            line-height: 1.4;
+        }
+        
+        .employee-info strong {
+            display: block;
+        }
+        
+        .employee-info small {
+            color: #666;
+            font-size: 0.8rem;
+        }
+    </style>
+</body>
+</html>

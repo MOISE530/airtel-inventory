@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Airtel Inventory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .error-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        .error-code {
+            font-size: 72px;
+            font-weight: bold;
+            color: #e20000;
+            margin-bottom: 20px;
+        }
+        
+        .error-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .error-message {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .correct-urls {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .correct-urls h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .url-list {
+            list-style: none;
+        }
+        
+        .url-list li {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #e20000;
+        }
+        
+        .url-list code {
+            color: #e20000;
+            font-weight: bold;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #e20000;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #c70000;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .airtel-logo {
+            font-size: 36px;
+            color: #e20000;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="airtel-logo">AIRTEL</div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-message">
+            The page you're looking for doesn't exist. This might be because:
+        </p>
+        
+        <div class="correct-urls">
+            <h3>✅ Correct URLs to Access:</h3>
+            <ul class="url-list">
+                <li><strong>Login:</strong> <code>http://localhost:8081/airtel-inventory/login</code></li>
+                <li><strong>Dashboard:</strong> <code>http://localhost:8081/airtel-inventory/dashboard</code></li>
+                <li><strong>Devices:</strong> <code>http://localhost:8081/airtel-inventory/devices</code></li>
+                <li><strong>Add Device:</strong> <code>http://localhost:8081/airtel-inventory/devices/add</code></li>
+            </ul>
+        </div>
+        
+        <div class="action-buttons">
+            <a th:href="@{/login}" class="btn btn-primary">Go to Login Page</a>
+            <a th:href="@{/dashboard}" class="btn btn-secondary">Go to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

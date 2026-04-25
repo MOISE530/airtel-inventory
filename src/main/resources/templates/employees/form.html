@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtel Inventory System - Employee Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>AIRTEL END-USER EQUIPMENT INVENTORY</h1>
+                </div>
+                <div class="user-info">
+                    <span>Welcome, <strong>Admin</strong></span>
+                    <a th:href="@{/logout}" class="logout-btn">Logout</a>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2 th:text="${isEdit ? 'Edit Employee' : 'Add New Employee'}">Add New Employee</h2>
+                    <p th:text="${isEdit ? 'Update employee information' : 'Register a new employee in the system'}">Register a new employee in the system</p>
+                </div>
+                <div class="page-actions">
+                    <a th:href="@{/employees}" class="btn btn-secondary">Back to Employees</a>
+                </div>
+            </div>
+            
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+            
+            <div class="form-container">
+                <form th:action="@{${isEdit ? '/employees/edit/{id}' : '/employees/add'}(id=${employee.id})}" 
+                      th:object="${employee}" 
+                      method="post" 
+                      class="employee-form">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="employeeId">Employee ID *</label>
+                            <input type="text" id="employeeId" th:field="*{employeeId}" required 
+                                   class="form-control" th:readonly="${isEdit}">
+                            <small class="form-help">Unique employee identifier (e.g., EMP001)</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" th:field="*{fullName}" required 
+                                   class="form-control" placeholder="John Doe">
+                            <small class="form-help">Employee's full name</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="department">Department *</label>
+                            <select id="department" th:field="*{department}" required class="form-control">
+                                <option value="">Select Department</option>
+                                <option value="IT">IT</option>
+                                <option value="HR">Human Resources</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sales">Sales</option>
+                                <option value="Operations">Operations</option>
+                                <option value="Customer Service">Customer Service</option>
+                                <option value="Administration">Administration</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="designation">Designation *</label>
+                            <input type="text" id="designation" th:field="*{designation}" required 
+                                   class="form-control" placeholder="Manager, Developer, etc.">
+                            <small class="form-help">Job title or position</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" th:field="*{email}" 
+                                   class="form-control" placeholder="john.doe@airtel.com">
+                            <small class="form-help">Official email address</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" th:field="*{phone}" 
+                                   class="form-control" placeholder="+1234567890">
+                            <small class="form-help">Contact phone number</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" th:text="${isEdit ? 'Update Employee' : 'Add Employee'}">Add Employee</button>
+                        <a th:href="@{/employees}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

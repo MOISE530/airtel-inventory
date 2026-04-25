@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtel Inventory System - Employee Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>AIRTEL END-USER EQUIPMENT INVENTORY</h1>
+                </div>
+                <div class="user-info">
+                    <span>Welcome, <strong>Admin</strong></span>
+                    <a th:href="@{/logout}" class="logout-btn">Logout</a>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Employee Details</h2>
+                    <p>View employee information and device assignments</p>
+                </div>
+                <div class="page-actions">
+                    <a th:href="@{/employees/edit/{id}(id=${employee.id})}" class="btn btn-warning">Edit Employee</a>
+                    <a th:href="@{/employees}" class="btn btn-secondary">Back to Employees</a>
+                </div>
+            </div>
+            
+            <div class="employee-details">
+                <div class="detail-card">
+                    <h3>Personal Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>Employee ID:</label>
+                            <span th:text="${employee.employeeId}">EMP001</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Full Name:</label>
+                            <span th:text="${employee.fullName}">John Doe</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Department:</label>
+                            <span th:text="${employee.department}">IT</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Designation:</label>
+                            <span th:text="${employee.designation}">Manager</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Email:</label>
+                            <span th:text="${employee.email}">john.doe@airtel.com</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Phone:</label>
+                            <span th:text="${employee.phone}">+1234567890</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-card">
+                    <h3>Assignment Summary</h3>
+                    <div class="assignment-stats">
+                        <div class="stat-item">
+                            <strong th:text="${activeAssignmentsCount}">0</strong>
+                            <span>Active Assignments</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong th:text="${assignments != null ? assignments.size() : 0}">0</strong>
+                            <span>Total Assignments</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-card">
+                    <h3>Device Assignment History</h3>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Assigned Date</th>
+                                    <th>Return Date</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="assignment : ${assignments}">
+                                    <td>
+                                        <div class="device-info">
+                                            <strong th:text="${assignment.device.assetTag}">LAP-001</strong><br>
+                                            <small th:text="${assignment.device.brand + ' ' + assignment.device.model}">Dell XPS 15</small>
+                                        </div>
+                                    </td>
+                                    <td th:text="${#temporals.format(assignment.assignedDate, 'yyyy-MM-dd')}">2023-06-01</td>
+                                    <td>
+                                        <span th:if="${assignment.returnDate != null}" 
+                                              th:text="${#temporals.format(assignment.returnDate, 'yyyy-MM-dd')}">2023-06-15</span>
+                                        <span th:if="${assignment.returnDate == null}" class="status-badge status-assigned">Active</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge" 
+                                              th:classappend="${assignment.returnDate == null ? 'status-assigned' : 'status-available'}"
+                                              th:text="${assignment.returnDate == null ? 'Active' : 'Returned'}">Active</span>
+                                    </td>
+                                    <td th:text="${assignment.notes}">Development work</td>
+                                </tr>
+                                <tr th:if="${assignments == null or assignments.empty}">
+                                    <td colspan="5" class="text-center">No device assignments found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <style>
+        .employee-details {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .detail-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .detail-card h3 {
+            margin-bottom: 1.5rem;
+            color: #333;
+            border-bottom: 2px solid #e20000;
+            padding-bottom: 0.5rem;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .detail-item label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .detail-item span {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .assignment-stats {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            min-width: 120px;
+        }
+        
+        .stat-item strong {
+            display: block;
+            font-size: 2rem;
+            color: #e20000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-item span {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .device-info {
+            line-height: 1.4;
+        }
+        
+        .device-info strong {
+            display: block;
+        }
+        
+        .device-info small {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        @media (max-width: 768px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .assignment-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .stat-item {
+                min-width: auto;
+            }
+        }
+    </style>
+</body>
+</html>

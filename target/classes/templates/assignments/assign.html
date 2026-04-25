@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtel Inventory System - Assign Device</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>AIRTEL END-USER EQUIPMENT INVENTORY</h1>
+                </div>
+                <div class="user-info">
+                    <span>Welcome, <strong>Admin</strong></span>
+                    <a th:href="@{/logout}" class="logout-btn">Logout</a>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Assign Device to Employee</h2>
+                    <p>Assign available equipment to employees</p>
+                </div>
+                <div class="page-actions">
+                    <a th:href="@{/assignments}" class="btn btn-secondary">Back to Assignments</a>
+                </div>
+            </div>
+            
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+            
+            <div class="form-container">
+                <form th:action="@{/assignments/assign}" method="post" class="assignment-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="deviceId">Select Device *</label>
+                            <select id="deviceId" name="deviceId" required class="form-control">
+                                <option value="">Choose a device...</option>
+                                <option th:each="device : ${availableDevices}" 
+                                        th:value="${device.id}"
+                                        th:text="${device.assetTag + ' - ' + device.brand + ' ' + device.model + ' (' + device.deviceType + ')'}">
+                                    LAP-001 - Dell XPS 15 (Laptop)
+                                </option>
+                            </select>
+                            <small class="form-help">Only available devices are shown</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="employeeId">Select Employee *</label>
+                            <select id="employeeId" name="employeeId" required class="form-control">
+                                <option value="">Choose an employee...</option>
+                                <option th:each="employee : ${employees}" 
+                                        th:value="${employee.id}"
+                                        th:text="${employee.fullName + ' - ' + employee.employeeId + ' (' + employee.department + ')'}">
+                                    John Doe - EMP001 (IT)
+                                </option>
+                            </select>
+                            <small class="form-help">Select the employee to assign the device to</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="notes">Assignment Notes</label>
+                            <textarea id="notes" name="notes" rows="4" class="form-control" 
+                                      placeholder="Enter any notes about this assignment (purpose, duration, etc.)"></textarea>
+                            <small class="form-help">Optional: Add notes about the assignment</small>
+                        </div>
+                    </div>
+                    
+                    <div class="assignment-summary">
+                        <h3>Assignment Summary</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <strong>Device:</strong>
+                                <span id="selectedDevice">No device selected</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Employee:</strong>
+                                <span id="selectedEmployee">No employee selected</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Assignment Date:</strong>
+                                <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">2024-04-25</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Assign Device</button>
+                        <a th:href="@{/assignments}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <style>
+        .assignment-form {
+            max-width: 800px;
+        }
+        
+        .assignment-summary {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border-left: 4px solid #e20000;
+        }
+        
+        .assignment-summary h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .summary-item {
+            padding: 0.5rem 0;
+        }
+        
+        .summary-item strong {
+            color: #666;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-item span {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    
+    <script>
+        // Update summary when selections change
+        document.getElementById('deviceId').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const deviceText = selectedOption.textContent;
+            document.getElementById('selectedDevice').textContent = deviceText || 'No device selected';
+        });
+        
+        document.getElementById('employeeId').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const employeeText = selectedOption.textContent;
+            document.getElementById('selectedEmployee').textContent = employeeText || 'No employee selected';
+        });
+    </script>
+</body>
+</html>

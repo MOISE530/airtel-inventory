@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtel Inventory System - Assignments</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>AIRTEL END-USER EQUIPMENT INVENTORY</h1>
+                </div>
+                <div class="user-info">
+                    <span>Welcome, <strong>Admin</strong></span>
+                    <a th:href="@{/logout}" class="logout-btn">Logout</a>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2>Device Assignments</h2>
+                    <p>Track device assignments to employees</p>
+                </div>
+                <div class="page-actions">
+                    <a th:href="@{/assignments/assign}" class="btn btn-primary">Assign Device</a>
+                    <a th:href="@{/assignments/active}" class="btn btn-secondary" 
+                       th:classappend="${showActiveOnly ? 'btn-primary' : 'btn-secondary'}">
+                        <span th:text="${showActiveOnly ? 'All Assignments' : 'Active Only'}">Active Only</span>
+                    </a>
+                    <a th:href="@{/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+                </div>
+            </div>
+            
+            <div th:if="${success}" class="alert alert-success">
+                <span th:text="${success}"></span>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}"></span>
+            </div>
+            
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <h3 th:text="${activeAssignmentsCount}">0</h3>
+                    <p>Active Assignments</p>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Device</th>
+                            <th>Employee</th>
+                            <th>Assigned Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="assignment : ${assignments}">
+                            <td th:text="${assignment.id}">1</td>
+                            <td>
+                                <div class="device-info">
+                                    <strong th:text="${assignment.device.assetTag}">LAP-001</strong><br>
+                                    <small th:text="${assignment.device.brand + ' ' + assignment.device.model}">Dell XPS 15</small>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="employee-info">
+                                    <strong th:text="${assignment.employee.fullName}">John Doe</strong><br>
+                                    <small th:text="${assignment.employee.employeeId}">EMP001</small><br>
+                                    <small th:text="${assignment.employee.department}">IT</small>
+                                </div>
+                            </td>
+                            <td th:text="${#temporals.format(assignment.assignedDate, 'yyyy-MM-dd')}">2023-06-01</td>
+                            <td>
+                                <span th:if="${assignment.returnDate != null}" 
+                                      th:text="${#temporals.format(assignment.returnDate, 'yyyy-MM-dd')}">2023-06-15</span>
+                                <span th:if="${assignment.returnDate == null}" class="status-badge status-assigned">Active</span>
+                            </td>
+                            <td>
+                                <span class="status-badge" 
+                                      th:classappend="${assignment.returnDate == null ? 'status-assigned' : 'status-available'}"
+                                      th:text="${assignment.returnDate == null ? 'Active' : 'Returned'}">Active</span>
+                            </td>
+                            <td th:text="${assignment.notes}">Development work</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a th:if="${assignment.returnDate == null}" 
+                                       th:href="@{/assignments/return/{id}(id=${assignment.id})}" 
+                                       class="btn btn-success btn-sm">Return</a>
+                                    <a th:href="@{/assignments/delete/{id}(id=${assignment.id})}" 
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Are you sure you want to delete this assignment?')">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${assignments == null or assignments.empty}">
+                            <td colspan="8" class="text-center">No assignments found. <a th:href="@{/assignments/assign}">Assign your first device</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <style>
+        .device-info, .employee-info {
+            line-height: 1.4;
+        }
+        .device-info strong, .employee-info strong {
+            display: block;
+        }
+        .device-info small, .employee-info small {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .stats-summary {
+            margin-bottom: 2rem;
+        }
+        .stats-summary .stat-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 200px;
+        }
+        .stats-summary .stat-card h3 {
+            font-size: 2rem;
+            color: #e20000;
+            margin-bottom: 0.5rem;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+    </style>
+</body>
+</html>

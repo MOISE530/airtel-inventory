@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isEdit ? 'Airtel Inventory System - Edit Device' : 'Airtel Inventory System - Add Device'}">Airtel Inventory System - Add Device</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>AIRTEL END-USER EQUIPMENT INVENTORY</h1>
+                </div>
+                <div class="user-info">
+                    <span>Welcome, <strong>Admin</strong></span>
+                    <a th:href="@{/logout}" class="logout-btn">Logout</a>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h2 th:text="${isEdit ? 'Edit Device' : 'Register New Device'}">Register New Device</h2>
+                    <p th:text="${isEdit ? 'Update device information' : 'Add new equipment to the inventory system'}">Add new equipment to the inventory system</p>
+                </div>
+                <div class="page-actions">
+                    <a th:href="@{/devices}" class="btn btn-secondary">Back to Devices</a>
+                </div>
+            </div>
+            
+            <div class="form-container">
+                <form th:action="@{${isEdit ? '/devices/edit/{id}' : '/devices/add'}(id=${device.id})}" th:object="${device}" method="post" class="device-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="assetTag">Asset Tag *</label>
+                            <input type="text" id="assetTag" th:field="*{assetTag}" required class="form-control">
+                            <small class="form-help">Unique identifier for the device (e.g., LAP-001)</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="serialNumber">Serial Number</label>
+                            <input type="text" id="serialNumber" th:field="*{serialNumber}" class="form-control">
+                            <small class="form-help">Manufacturer serial number</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="deviceType">Device Type *</label>
+                            <select id="deviceType" th:field="*{deviceType}" required class="form-control">
+                                <option value="">Select Device Type</option>
+                                <option value="Laptop">Laptop</option>
+                                <option value="Desktop">Desktop</option>
+                                <option value="Mobile">Mobile Phone</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="brand">Brand *</label>
+                            <input type="text" id="brand" th:field="*{brand}" required class="form-control" placeholder="e.g., Dell, HP, Apple">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="model">Model *</label>
+                            <input type="text" id="model" th:field="*{model}" required class="form-control" placeholder="e.g., XPS 15, EliteBook 840">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="deviceCondition">Condition</label>
+                            <select id="deviceCondition" th:field="*{deviceCondition}" class="form-control">
+                                <option value="New">New</option>
+                                <option value="Good" selected>Good</option>
+                                <option value="Damaged">Damaged</option>
+                                <option value="Repair">Under Repair</option>
+                                <option value="Retired">Retired</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="specifications">Specifications</label>
+                            <textarea id="specifications" th:field="*{specifications}" rows="4" class="form-control" 
+                                      placeholder="Enter device specifications such as CPU, RAM, Storage, etc."></textarea>
+                            <small class="form-help">Optional: Detailed specifications of the device</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" th:text="${isEdit ? 'Update Device' : 'Register Device'}">Register Device</button>
+                        <a th:href="@{/devices}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

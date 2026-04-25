@@ -1,0 +1,47 @@
+services:
+  # Web Service
+  - type: web
+    name: airtel-inventory
+    env: java
+    plan: free
+    buildCommand: "./mvnw clean package -DskipTests"
+    startCommand: "java -jar target/airtel-inventory-1.0.0.jar"
+    healthCheckPath: /airtel-inventory/login
+    autoDeploy: true
+    
+    # Environment Variables
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JAVA_VERSION
+        value: 17
+        
+    # Build Configuration
+    buildContext: .
+    
+    # Instance Configuration
+    instanceCount: 1
+    instanceType: free
+    
+  # Database Service
+  - type: pserv
+    name: airtel-inventory-db
+    env: postgres
+    plan: free
+    region: oregon
+    
+    # Database Configuration
+    databaseName: airtel_inventory
+    user: airtel_user
+    
+    # Health Check
+    healthCheckPath: /
+    
+# Environment Variables for Database Connection
+databases:
+  - name: airtel_inventory
+    user: airtel_user
+    region: oregon
+    plan: free
