@@ -1,4 +1,4 @@
-FROM maven:3.9.9-eclipse-temurin-17
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
@@ -9,9 +9,15 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests
 
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 10000
 
-ENV JAVA_OPTS="-Xmx512m -Xms256m"
+ENV SERVER_PORT=10000
 ENV SPRING_PROFILES_ACTIVE=production
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar target/airtel-inventory-1.0.0.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
