@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
@@ -6,15 +6,12 @@ COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Fix permission
 RUN chmod +x mvnw
 
-# Download dependencies
 RUN ./mvnw dependency:go-offline -B
 
 COPY src ./src
 
-# Build app
 RUN ./mvnw clean package -DskipTests
 
 EXPOSE 10000
